@@ -1,58 +1,65 @@
 import { siteContent } from "@/lib/site";
 
+const amenityIcons: Record<string, string> = {
+  "homely-food": "M4 3v6a2 2 0 0 0 4 0V3M6 3v18M19 21V3c-4 3-4 9 0 9",
+  "walkable-distance": "M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0ZM15 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z",
+  "lift-generator": "m13 2-9 12h7l-1 8 10-12h-7l1-8Z",
+  "high-speed-wifi": "M2 8a16 16 0 0 1 20 0M5 12a11 11 0 0 1 14 0M8 16a6 6 0 0 1 8 0M12 20h.01",
+  "ro-water-hot-water": "M12 3S5 11 5 15a7 7 0 0 0 14 0c0-4-7-12-7-12ZM9 15a3 3 0 0 0 3 3",
+  "laundry-washing": "M5 3h14a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1ZM4 8h16M7 5.5h.01M10 5.5h.01M16 14a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z",
+  "security-cctv": "m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Zm-4 9 3 3 5-6",
+  "study-atmosphere": "M12 6C9 3 5 3 2 4v15c3-1 7-1 10 2 3-3 7-3 10-2V4c-3-1-7-1-10 2Zm0 0v15",
+};
+
 export default function Amenities() {
   const { amenities } = siteContent;
 
   return (
-    <section id="facilities" className="py-20 lg:py-28 bg-white text-neutral-900 scroll-mt-16 relative border-b border-neutral-200">
+    <section id="facilities" aria-labelledby="facilities-heading" className="relative scroll-mt-16 border-b border-neutral-200 bg-[#f8f9fb] py-20 text-neutral-900 lg:py-24">
       <div id="amenities" className="absolute -top-16 left-0" aria-hidden="true" />
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          {/* Left */}
-          <div className="lg:col-span-4 lg:sticky lg:top-28">
-            <span className="text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2 block">
-              Everything Included
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <span className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-amber-800">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden="true" />
+              Everyday comfort
             </span>
-            <h2 className="text-4xl sm:text-5xl font-extrabold text-neutral-900 font-heading tracking-tight leading-tight">
-              Hostel facilities{" "}
-              <span className="text-amber-500">built for students</span>.
+            <h2 id="facilities-heading" className="mt-4 font-heading text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+              Everything you need.<br />
+              <span className="text-neutral-500">Right where you live.</span>
             </h2>
-            <p className="mt-4 text-base sm:text-lg text-neutral-600 leading-relaxed">
-              Every facility is planned to keep your daily college stay simple, comfortable, and peaceful so you can completely focus on your studies.
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-600">
+              Good food, space to focus, and the comforts of home. Thoughtful facilities that make student life a little easier.
             </p>
-            <div className="mt-6 pt-6 border-t border-neutral-200 hidden lg:block">
-              <a href="#rooms" className="inline-flex items-center gap-2 text-sm font-bold text-neutral-900 hover:text-amber-600 transition">
-                <span>View rooms &amp; fee structure</span>
-                <span>→</span>
-              </a>
-            </div>
           </div>
-
-          {/* Right */}
-          <div className="lg:col-span-8">
-            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8">
-              {amenities.map((item) => (
-                <div key={item.id} className="border-t border-neutral-200 pt-5 flex flex-col justify-start">
-                  <dt className="text-xl font-extrabold font-heading text-neutral-900 tracking-tight flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-amber-400" />
-                    <span>{item.title}</span>
-                  </dt>
-                  <dd className="mt-2 text-base text-neutral-600 leading-relaxed">
-                    {item.beforeHighlight ? (
-                      <>
-                        {item.beforeHighlight}
-                        <span className="text-neutral-900 font-semibold">{item.highlight}</span>
-                        {item.afterHighlight}
-                      </>
-                    ) : (
-                      item.detail
-                    )}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
+          <a href="#rooms" className="inline-flex min-h-11 w-fit shrink-0 items-center justify-center gap-3 rounded-xl bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-4">
+            View rooms &amp; fees <span aria-hidden="true">↗</span>
+          </a>
         </div>
+
+        <dl className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-12 lg:grid-cols-4 lg:gap-5">
+          {amenities.map((item) => (
+            <div key={item.id} className="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-[0_2px_8px_rgba(15,23,42,0.025)] transition-[border-color,box-shadow] duration-200 hover:border-amber-300 hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)] motion-reduce:transition-none">
+              <dt>
+                <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-amber-100 bg-amber-50 text-amber-700">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
+                    <path d={amenityIcons[item.id] ?? "m12 3 8 9-8 9-8-9 8-9Z"} />
+                  </svg>
+                </span>
+                <span className="block font-heading text-lg font-bold leading-snug tracking-tight text-neutral-900">{item.title}</span>
+              </dt>
+              <dd className="mt-3 text-sm leading-6 text-neutral-600">
+                {item.beforeHighlight ? (
+                  <>
+                    {item.beforeHighlight}
+                    <span className="font-medium text-neutral-800">{item.highlight}</span>
+                    {item.afterHighlight}
+                  </>
+                ) : item.detail}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );

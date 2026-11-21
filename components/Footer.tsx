@@ -63,11 +63,6 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href={`https://wa.me/${hostel.wardenPhoneDigits}`} target="_blank" rel="noopener noreferrer" className="hover:text-key-gold transition-colors flex items-center gap-1.5">
-                  <span>🏢 Warden Desk: {hostel.wardenPhoneDisplay}</span>
-                </a>
-              </li>
-              <li>
                 <a href={`mailto:${hostel.email}`} className="hover:text-key-gold transition-colors">✉️ {hostel.email}</a>
               </li>
               <li>

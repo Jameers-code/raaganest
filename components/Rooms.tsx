@@ -1,26 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { siteContent, RoomOption, FloorBlock } from "@/lib/site";
+import { siteContent, RoomOption } from "@/lib/site";
 
 export default function Rooms() {
   const { rooms, floors } = siteContent;
-  // Default to Unlimited AC so it is selected with the blue border matching the user's reference
-  const [selectedPlanId, setSelectedPlanId] = useState<string>("unlimited-ac-5-sharing");
-  const [activeFloorId, setActiveFloorId] = useState<string>(floors[0].id);
-  const [selectedRoomNumber, setSelectedRoomNumber] = useState<string | null>(null);
+  // Select the AC plan initially.
+  const [selectedPlanId, setSelectedPlanId] = useState<string>("ac-5-sharing");
 
   const currentPlan = rooms.find((r) => r.id === selectedPlanId) || rooms[0];
-  const currentFloor = floors.find((f) => f.id === activeFloorId) || floors[0];
 
-  const handleAskAboutPlan = (plan: RoomOption, roomNum?: string) => {
+  const handleAskAboutPlan = (plan: RoomOption, floorLabel?: string) => {
     if (typeof window !== "undefined") {
-      const roomLabel = roomNum ? `${plan.name} (${roomNum})` : plan.name;
       window.dispatchEvent(
         new CustomEvent("room-select", {
           detail: {
             roomId: plan.id,
-            roomName: roomLabel,
+            roomName: plan.name,
+            floorLabel,
           },
         })
       );
@@ -31,22 +28,7 @@ export default function Rooms() {
     }
   };
 
-  const handleSelectRoomPill = (roomNum: string, floor: FloorBlock) => {
-    setSelectedRoomNumber(roomNum);
-    if (floor.isAC) {
-      if (currentPlan.id === "non-ac-5-sharing") {
-        setSelectedPlanId("unlimited-ac-5-sharing");
-      }
-    } else {
-      setSelectedPlanId("non-ac-5-sharing");
-    }
-  };
-
-  const displayPlans = [
-    rooms.find((r) => r.id === "non-ac-5-sharing") || rooms[2],
-    rooms.find((r) => r.id === "unlimited-ac-5-sharing") || rooms[0],
-    rooms.find((r) => r.id === "limited-ac-5-sharing") || rooms[1],
-  ];
+  const displayPlans = [...rooms].sort((a, b) => Number(a.ac) - Number(b.ac));
 
   return (
     <section id="rooms" className="py-20 lg:py-28 bg-[#fbfcfb] text-neutral-900 scroll-mt-16 border-y border-neutral-200/60">
@@ -54,7 +36,7 @@ export default function Rooms() {
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-14 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-800 text-xs font-bold uppercase tracking-wider mb-4">
-            <span>48 Well-Ventilated Rooms • 4 Floors</span>
+            <span>Comfortable Rooms • {floors.length} Floors</span>
           </div>
           <h2 className="text-4xl sm:text-5xl font-extrabold text-neutral-900 font-heading tracking-tight leading-tight">
             Rooms &amp; transparent tariffs
@@ -64,17 +46,12 @@ export default function Rooms() {
           </p>
         </div>
 
-        {/* 3 Fee Structure Cards Grid - Pixel Perfect to Reference Image */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mb-20 items-stretch">
+        {/* Annual fee plans */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-20 items-stretch">
           {displayPlans.map((plan) => {
             const isSelected = plan.id === selectedPlanId;
             const isFeatured = plan.popular;
-            const buttonLabel =
-              plan.id === "unlimited-ac-5-sharing"
-                ? "Get Unlimited AC"
-                : plan.id === "limited-ac-5-sharing"
-                ? "Get Limited AC"
-                : "Get Non-AC";
+            const buttonLabel = plan.ac ? "Get AC" : "Get Non-AC";
 
             return (
               <div
@@ -106,16 +83,16 @@ export default function Rooms() {
                         ₹
                       </span>
                       <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-neutral-900 font-heading">
-                        {plan.monthlyPrice === 100000 ? "1,00,000" : "85,000"}
+                        {plan.monthlyPrice.toLocaleString("en-IN")}
                       </span>
                       <span className="text-sm font-medium text-neutral-500 whitespace-nowrap ml-1">
                         /year
                       </span>
                     </div>
                     <div className="h-5 mt-1 flex items-center">
-                      {plan.id === "limited-ac-5-sharing" ? (
+                      {plan.ac ? (
                         <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">
-                          + AC meter bill
+                          1,000 electricity units included
                         </span>
                       ) : (
                         <span className="text-[11px] font-medium text-neutral-400">
@@ -131,7 +108,7 @@ export default function Rooms() {
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedPlanId(plan.id);
-                      handleAskAboutPlan(plan, selectedRoomNumber || undefined);
+                      handleAskAboutPlan(plan);
                     }}
                     className="mt-6 w-full inline-flex items-center justify-center py-3.5 px-6 rounded-xl font-bold text-sm sm:text-base text-white bg-[#2563eb] hover:bg-[#1d4ed8] active:bg-[#1e40af] transition-all duration-200 shadow-sm hover:shadow cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                   >
@@ -166,7 +143,7 @@ export default function Rooms() {
 
                 {/* Sub-footer details */}
                 <div className="mt-8 pt-4 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500 font-medium">
-                  <span>{plan.blocks ? plan.blocks.split("(")[0].trim() : "5-Sharing"}</span>
+                  <span>5-Sharing</span>
                   <span className="font-semibold text-neutral-700">
                     {plan.depositDisplay}
                   </span>
@@ -174,146 +151,6 @@ export default function Rooms() {
               </div>
             );
           })}
-        </div>
-
-        {/* Floor & Block Directory Grid */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-lg border border-neutral-200/80 mb-12">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-neutral-100">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
-                Hostel Building Layout
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 font-heading tracking-tight mt-0.5">
-                Explore floors, blocks &amp; room numbers
-              </h3>
-            </div>
-            <p className="text-xs sm:text-sm text-neutral-600 max-w-sm">
-              Click on any floor block or specific room number below to view its floor location and enquire directly.
-            </p>
-          </div>
-
-          {/* Floor Navigation Tabs */}
-          <div
-            role="tablist"
-            aria-label="Hostel floor selector"
-            className="flex overflow-x-auto gap-2 py-4 scrollbar-none snap-x"
-          >
-            {floors.map((floor) => {
-              const isActive = floor.id === activeFloorId;
-              return (
-                <button
-                  key={floor.id}
-                  role="tab"
-                  type="button"
-                  aria-selected={isActive}
-                  onClick={() => setActiveFloorId(floor.id)}
-                  className={`min-h-[50px] px-5 py-2.5 rounded-2xl text-left transition shrink-0 snap-start border ${
-                    isActive
-                      ? "bg-[#0f172a] text-white border-[#0f172a] shadow-sm"
-                      : "bg-neutral-50 hover:bg-neutral-100 text-neutral-900 border-neutral-200"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="font-extrabold font-heading text-sm sm:text-base">
-                      {floor.floorLabel} — {floor.blockName}
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        floor.isAC
-                          ? isActive ? "bg-white/20 text-white" : "bg-neutral-200 text-neutral-800"
-                          : isActive ? "bg-key-gold text-neutral-900" : "bg-neutral-200 text-neutral-800"
-                      }`}
-                    >
-                      {floor.acType}
-                    </span>
-                  </div>
-                  <p
-                    className={`text-[11px] mt-0.5 ${
-                      isActive ? "text-white/80" : "text-neutral-500"
-                    }`}
-                  >
-                    12 Rooms ({floor.roomRange}) • 5 Sharing
-                  </p>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Active Floor Details & Room Grid */}
-          <div className="mt-6 p-6 rounded-2xl bg-neutral-50 border border-neutral-200">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-              <div>
-                <h4 className="text-lg font-extrabold text-neutral-900 font-heading flex items-center gap-2">
-                  <span>{currentFloor.floorLabel} ({currentFloor.blockName})</span>
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-neutral-200 text-neutral-800">
-                    {currentFloor.acType}
-                  </span>
-                </h4>
-                <p className="text-xs text-neutral-600 mt-0.5">
-                  {currentFloor.tagline} • Fee: <strong>{currentFloor.priceNote}</strong>
-                </p>
-              </div>
-
-              {selectedRoomNumber && (
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-neutral-300 text-xs text-neutral-900 font-bold shadow-sm">
-                  <span>Selected: Room {selectedRoomNumber}</span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedRoomNumber(null)}
-                    className="text-neutral-400 hover:text-neutral-800 text-sm leading-none"
-                    aria-label="Clear room selection"
-                  >
-                    ×
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Room Pills */}
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-neutral-600 mb-3">
-                Rooms in {currentFloor.blockName} (Click to select):
-              </p>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2">
-                {currentFloor.roomList.map((roomNum) => {
-                  const isRoomActive = selectedRoomNumber === roomNum;
-                  return (
-                    <button
-                      key={roomNum}
-                      type="button"
-                      onClick={() => handleSelectRoomPill(roomNum, currentFloor)}
-                      className={`min-h-[44px] rounded-xl font-bold font-mono text-sm transition flex flex-col items-center justify-center border ${
-                        isRoomActive
-                          ? "bg-[#0f172a] text-white border-[#0f172a] shadow-md ring-2 ring-key-gold"
-                          : "bg-white text-neutral-800 border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50"
-                      }`}
-                    >
-                      <span>{roomNum}</span>
-                      <span className="text-[9px] font-sans font-normal opacity-70">
-                        5 Bed
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {selectedRoomNumber && (
-              <div className="mt-5 pt-4 border-t border-neutral-200 flex flex-wrap items-center justify-between gap-3">
-                <span className="text-xs text-neutral-700">
-                  Ready to book <strong>Room {selectedRoomNumber}</strong> on {currentFloor.floorLabel} ({currentFloor.acType})?
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleAskAboutPlan(currentPlan, selectedRoomNumber)}
-                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-key-gold text-neutral-900 font-bold text-xs shadow-sm hover:brightness-105 transition"
-                >
-                  <span>Inquire About Room {selectedRoomNumber}</span>
-                  <span>→</span>
-                </button>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* 5-Sharing Room Blueprint Architectural SVG Layout */}
@@ -407,10 +244,10 @@ export default function Rooms() {
               <div className="pt-2">
                 <button
                   type="button"
-                  onClick={() => handleAskAboutPlan(currentPlan, selectedRoomNumber || undefined)}
+                  onClick={() => handleAskAboutPlan(currentPlan)}
                   className="w-full inline-flex items-center justify-center min-h-[48px] px-8 py-3.5 rounded-full bg-[#0f172a] text-white font-bold text-base hover:bg-[#1e293b] active:scale-98 transition shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
                 >
-                  Inquire About {selectedRoomNumber ? `Room ${selectedRoomNumber}` : currentPlan.name}
+                  Inquire About {currentPlan.name}
                 </button>
               </div>
             </div>

@@ -17,14 +17,10 @@ export interface HostelInfo {
   landmark: string;
   phoneDigits: string;
   phoneDisplay: string;
-  phoneSecondaryDigits: string;
-  phoneSecondaryDisplay: string;
   whatsappDigits: string;
   whatsappDisplay: string;
   managementPhoneDigits: string;
   managementPhoneDisplay: string;
-  wardenPhoneDigits: string;
-  wardenPhoneDisplay: string;
   contacts: ContactPerson[];
   email: string;
   instagram: string;
@@ -38,16 +34,6 @@ export interface HostelInfo {
 export interface FloorBlock {
   id: string;
   floorLabel: string;
-  blockName: string;
-  floorNumber: string;
-  acType: "Non-AC" | "Unlimited AC";
-  isAC: boolean;
-  totalRooms: number;
-  roomRange: string;
-  roomList: string[];
-  sharing: string;
-  priceNote: string;
-  tagline: string;
 }
 
 export interface RoomOption {
@@ -62,7 +48,6 @@ export interface RoomOption {
   depositDisplay: string;
   ac: boolean;
   acTypeLabel?: string;
-  blocks?: string;
   popular?: boolean;
   features: string[];
   dimensions: string;
@@ -141,30 +126,19 @@ export const siteContent: SiteContent = {
     address:
       "Near South Gate Engineering, Vishnu College, Kovvada, Bhimavaram, Andhra Pradesh 534202",
     landmark: "Directly opposite Vishnu College South Gate Entrance",
-    phoneDigits: "916300751897",
-    phoneDisplay: "+91 63007 51897",
-    phoneSecondaryDigits: "919010698831",
-    phoneSecondaryDisplay: "+91 90106 98831",
-    whatsappDigits: "916300751897",
-    whatsappDisplay: "+91 63007 51897",
-    managementPhoneDigits: "916300751897",
-    managementPhoneDisplay: "+91 63007 51897",
-    wardenPhoneDigits: "919010698831",
-    wardenPhoneDisplay: "+91 90106 98831",
+    phoneDigits: "919133886777",
+    phoneDisplay: "91338 86777",
+    whatsappDigits: "919133886777",
+    whatsappDisplay: "91338 86777",
+    managementPhoneDigits: "919133886777",
+    managementPhoneDisplay: "91338 86777",
     contacts: [
       {
         id: "management",
         label: "Management / Admissions",
         role: "Admissions, Bookings & Fee Inquiries",
-        phoneDigits: "916300751897",
-        phoneDisplay: "+91 63007 51897",
-      },
-      {
-        id: "warden",
-        label: "Warden Desk",
-        role: "Campus Visits, Room Inspection & Daily Support",
-        phoneDigits: "919010698831",
-        phoneDisplay: "+91 90106 98831",
+        phoneDigits: "919133886777",
+        phoneDisplay: "91338 86777",
       },
     ],
     email: "raaganesthostel@gmail.com",
@@ -178,62 +152,9 @@ export const siteContent: SiteContent = {
   },
 
   floors: [
-    {
-      id: "ground-floor-a",
-      floorLabel: "Ground Floor",
-      blockName: "A Block",
-      floorNumber: "0",
-      acType: "Non-AC",
-      isAC: false,
-      totalRooms: 12,
-      roomRange: "A1 to A12",
-      roomList: ["A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","A11","A12"],
-      sharing: "5 Sharing",
-      priceNote: "₹85,000 / year",
-      tagline: "Effortless ground floor access, natural cross breeze, zero stairs required",
-    },
-    {
-      id: "first-floor-b",
-      floorLabel: "1st Floor",
-      blockName: "B Block",
-      floorNumber: "1",
-      acType: "Non-AC",
-      isAC: false,
-      totalRooms: 12,
-      roomRange: "B1 to B12",
-      roomList: ["B1","B2","B3","B4","B5","B6","B7","B8","B9","B10","B11","B12"],
-      sharing: "5 Sharing",
-      priceNote: "₹85,000 / year",
-      tagline: "Bright first floor rooms with open courtyard ventilation",
-    },
-    {
-      id: "second-floor-c",
-      floorLabel: "2nd Floor",
-      blockName: "C Block",
-      floorNumber: "2",
-      acType: "Unlimited AC",
-      isAC: true,
-      totalRooms: 12,
-      roomRange: "C1 to C12",
-      roomList: ["C1","C2","C3","C4","C5","C6","C7","C8","C9","C10","C11","C12"],
-      sharing: "5 Sharing",
-      priceNote: "₹1,00,000 / yr (Unlimited) or ₹85,000 + AC Bill",
-      tagline: "Inverter AC comfort, passenger lift access, and peaceful study atmosphere",
-    },
-    {
-      id: "third-floor-d",
-      floorLabel: "3rd Floor",
-      blockName: "D Block",
-      floorNumber: "3",
-      acType: "Unlimited AC",
-      isAC: true,
-      totalRooms: 12,
-      roomRange: "D1 to D12",
-      roomList: ["D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","D11","D12"],
-      sharing: "5 Sharing",
-      priceNote: "₹1,00,000 / yr (Unlimited) or ₹85,000 + AC Bill",
-      tagline: "Top floor panoramic view, quiet exam prep environment, and inverter AC",
-    },
+    { id: "first-floor", floorLabel: "1st Floor" },
+    { id: "second-floor", floorLabel: "2nd Floor" },
+    { id: "third-floor", floorLabel: "3rd Floor" },
   ],
 
   navLinks: [
@@ -246,55 +167,29 @@ export const siteContent: SiteContent = {
 
   rooms: [
     {
-      id: "unlimited-ac-5-sharing",
-      name: "Unlimited AC Room",
+      id: "ac-5-sharing",
+      name: "AC Room",
       tagAngle: -3,
       beds: 5,
-      monthlyPrice: 100000,
-      monthlyPriceDisplay: "₹1,00,000",
+      monthlyPrice: 110000,
+      monthlyPriceDisplay: "₹1,10,000",
       billingPeriod: "/ year",
       deposit: 5000,
-      depositDisplay: "1 Lakh / Academic Year",
+      depositDisplay: "1,000 electricity units included",
       ac: true,
-      acTypeLabel: "Unlimited AC",
-      blocks: "C & D Block (Rooms C1–C12, D1–D12)",
+      acTypeLabel: "AC",
       popular: true,
       dimensions: "24 ft × 16 ft",
       description:
-        "Located on 2nd Floor (C Block) & 3rd Floor (D Block). 5 sharing setup with complete peace of mind: run the inverter split AC round the clock with zero additional electricity charges all year.",
+        "5 sharing setup with 1,000 electricity units included. Usage beyond 1,000 units is charged separately.",
       features: [
         "5 sharing spacious layout with 5 separate sturdy cots & mattresses",
-        "Unlimited Inverter Split AC (zero electricity sub-meter bills)",
+        "Inverter Split AC with 1,000 electricity units included",
+        "Electricity usage beyond 1,000 units is charged separately",
         "5 individual study tables, chairs & independent lockable wardrobes",
         "Attached western washroom with 24/7 solar hot water & shower",
         "Full Andhra homely mess (Breakfast, Lunch, Snacks, Dinner) included",
         "High-speed fiber Wi-Fi + daily housekeeping & sanitization",
-      ],
-    },
-    {
-      id: "limited-ac-5-sharing",
-      name: "Limited AC Room",
-      tagAngle: 4,
-      beds: 5,
-      monthlyPrice: 85000,
-      monthlyPriceDisplay: "₹85,000",
-      billingPeriod: "/ year + AC bill",
-      deposit: 5000,
-      depositDisplay: "₹85,000 + Room Meter Usage",
-      ac: true,
-      acTypeLabel: "Limited / Metered AC",
-      blocks: "C & D Block (Rooms C1–C12, D1–D12)",
-      popular: false,
-      dimensions: "24 ft × 16 ft",
-      description:
-        "Located on 2nd Floor (C Block) & 3rd Floor (D Block). Ideal for students who want AC availability on hot days, paying only for the exact electricity units their room consumes on a dedicated digital sub-meter.",
-      features: [
-        "5 sharing spacious room with 5 individual beds & fresh linens",
-        "Inverter Split AC connected to a room-dedicated sub-meter",
-        "₹85,000 base fee includes accommodation + full 4-time Andhra mess",
-        "5 personal study workstations with laptop charging ports",
-        "Attached western toilet with geyser facility & 24/7 water supply",
-        "Passenger elevator access to 2nd & 3rd floors",
       ],
     },
     {
@@ -309,18 +204,17 @@ export const siteContent: SiteContent = {
       depositDisplay: "₹85,000 All-Inclusive / Year",
       ac: false,
       acTypeLabel: "Non-AC Budget",
-      blocks: "A & B Block (Rooms A1–A12, B1–B12)",
       popular: false,
       dimensions: "24 ft × 16 ft",
       description:
-        "Located on Ground Floor (A Block: A1–A12) & 1st Floor (B Block: B1–B12). Natural airflow, dual high-speed ceiling fans, quick ground/first-floor access, and complete student amenities.",
+        "Natural airflow, dual high-speed ceiling fans, complete student amenities, and comfortable shared living.",
       features: [
         "5 sharing room with 5 durable single cots & dust-free mattresses",
         "Dual high-speed ceiling fans & large exterior windows for ventilation",
         "5 steel wardrobes with independent personal keys",
         "Attached western washroom with 24/7 hot water supply",
         "Full daily mess included: 3 wholesome meals + evening tea & snacks",
-        "Convenient ground & first floor access — no waiting for lifts",
+        "Comfortable shared living with complete student amenities",
       ],
     },
   ],

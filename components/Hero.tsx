@@ -129,7 +129,7 @@ export default function Hero() {
 
             {/* Quick Contact Badges */}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 text-xs text-white/70 font-medium">
-              <span className="font-mono text-white/40 uppercase tracking-wider text-[11px]">Direct lines:</span>
+              <span className="font-mono text-white/40 uppercase tracking-wider text-[11px]">Contact:</span>
               <a
                 href={`https://wa.me/${hostel.managementPhoneDigits}?text=${encodeURIComponent(
                   `Hello Management! I'm interested in room admission at ${hostel.name}.`
@@ -139,17 +139,6 @@ export default function Hero() {
                 className="inline-flex items-center gap-1.5 text-key-gold hover:underline font-mono"
               >
                 <span>Management: {hostel.managementPhoneDisplay}</span>
-              </a>
-              <span className="text-white/20 hidden sm:inline">•</span>
-              <a
-                href={`https://wa.me/${hostel.wardenPhoneDigits}?text=${encodeURIComponent(
-                  `Hello Warden! I'm interested in visiting ${hostel.name}.`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-white/80 hover:text-key-gold transition-colors font-mono"
-              >
-                <span>Warden: {hostel.wardenPhoneDisplay}</span>
               </a>
               <span className="text-white/20 hidden sm:inline">•</span>
               <a
@@ -223,8 +212,7 @@ export default function Hero() {
                 let badgeLabel = "Available";
                 if (room.popular) {
                   badgeLabel = "POPULAR";
-                } else if (room.id.includes("limited")) {
-                  badgeLabel = "METERED AC";
+
                 } else if (room.id.includes("non-ac")) {
                   badgeLabel = "NON-AC BUDGET";
                 }
@@ -267,11 +255,7 @@ export default function Hero() {
                         </h3>
                         <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#07080c]/75 mt-0.5 font-mono">
                           {room.beds} Beds •{" "}
-                          {room.ac
-                            ? room.id.includes("limited")
-                              ? "AC (Metered)"
-                              : "AC (Unlimited)"
-                            : "Non-AC"}
+                          {room.ac ? "AC" : "Non-AC"}
                         </p>
                       </div>
                       <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#07080c] text-white shadow-xs">
@@ -297,14 +281,8 @@ export default function Hero() {
                       </span>
                     </div>
 
-                    {room.blocks && (
-                      <div className="mt-2 text-[11px] font-black text-[#07080c] bg-black/10 border border-black/10 px-2.5 py-1 rounded-md inline-block font-mono">
-                        🏢 {room.blocks}
-                      </div>
-                    )}
-
                     <p className="text-xs text-[#07080c]/85 font-medium mt-2.5 line-clamp-2 leading-relaxed">
-                      {room.features[0]}
+                      {room.ac ? "1,000 electricity units included; additional usage charged separately." : room.features[0]}
                     </p>
 
                     <div className="mt-4 pt-2.5 border-t border-black/10 flex items-center justify-between text-xs font-black text-[#07080c]">
@@ -323,10 +301,7 @@ export default function Hero() {
             <div className="w-full max-w-[310px] sm:max-w-[360px] flex items-center justify-center gap-1.5 sm:gap-2 mt-5">
               {rooms.map((room: RoomOption, idx: number) => {
                 const isCurrent = idx === activeIndex;
-                let shortName = "Unlimited AC";
-                if (room.id.startsWith("limited")) shortName = "Limited AC";
-                else if (room.id.startsWith("unlimited")) shortName = "Unlimited AC";
-                else if (room.id.includes("non-ac")) shortName = "Non-AC";
+                const shortName = room.ac ? "AC" : "Non-AC";
 
                 return (
                   <button

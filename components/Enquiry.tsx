@@ -4,27 +4,20 @@ import { useState, useEffect, FormEvent } from "react";
 import { siteContent } from "@/lib/site";
 
 export default function Enquiry() {
-  const { hostel, rooms } = siteContent;
+  const { hostel, rooms, floors } = siteContent;
 
   const [selectedRoomId, setSelectedRoomId] = useState<string>(rooms[0]?.id || "");
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [selectedBlock, setSelectedBlock] = useState("A Block (Ground Floor — Non-AC)");
+  const [selectedFloor, setSelectedFloor] = useState("Any Floor / Flexible");
   const [note, setNote] = useState("");
-  const [recipient, setRecipient] = useState<"management" | "warden">("management");
   const [submittedStatus, setSubmittedStatus] = useState<string | null>(null);
 
   useEffect(() => {
     const handleRoomSelect = (e: Event) => {
-      const customEvent = e as CustomEvent<{ roomId: string; roomName: string }>;
+      const customEvent = e as CustomEvent<{ roomId: string; roomName: string; floorLabel?: string }>;
       if (customEvent.detail?.roomId) setSelectedRoomId(customEvent.detail.roomId);
-      if (customEvent.detail?.roomName) {
-        const name = customEvent.detail.roomName;
-        if (name.includes("(A") || name.includes("A Block")) setSelectedBlock("A Block (Ground Floor — Non-AC)");
-        else if (name.includes("(B") || name.includes("B Block")) setSelectedBlock("B Block (1st Floor — Non-AC)");
-        else if (name.includes("(C") || name.includes("C Block")) setSelectedBlock("C Block (2nd Floor — Unlimited AC)");
-        else if (name.includes("(D") || name.includes("D Block")) setSelectedBlock("D Block (3rd Floor — Unlimited AC)");
-      }
+      setSelectedFloor(customEvent.detail?.floorLabel || "Any Floor / Flexible");
     };
     window.addEventListener("room-select", handleRoomSelect);
     return () => window.removeEventListener("room-select", handleRoomSelect);
@@ -34,15 +27,15 @@ export default function Enquiry() {
     e.preventDefault();
     const selectedRoom = rooms.find((r) => r.id === selectedRoomId);
     const roomName = selectedRoom ? selectedRoom.name : "Student Room";
-    const targetDigits = recipient === "warden" ? hostel.wardenPhoneDigits : hostel.managementPhoneDigits;
-    const recipientLabel = recipient === "warden" ? "Warden Desk" : "Management / Admissions";
+    const targetDigits = hostel.managementPhoneDigits;
+    const recipientLabel = "Management / Admissions";
 
-    const message = `Hello ${hostel.name}!\nI would like to enquire about room admission (${recipientLabel}):\n- Name: ${fullName.trim()}\n- Phone: ${phoneNumber.trim()}\n- Room Type: ${roomName}\n- Preferred Block: ${selectedBlock}\n${note.trim() ? `- Notes / Questions: ${note.trim()}` : ""}`;
+    const message = `Hello ${hostel.name}!\nI would like to enquire about room admission (${recipientLabel}):\n- Name: ${fullName.trim()}\n- Phone: ${phoneNumber.trim()}\n- Room Type: ${roomName}\n- Preferred Floor: ${selectedFloor}\n${note.trim() ? `- Notes / Questions: ${note.trim()}` : ""}`;
 
     const waUrl = `https://wa.me/${targetDigits}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, "_blank", "noopener,noreferrer");
     setSubmittedStatus(
-      `Thank you, ${fullName.trim()}! Your enquiry for ${roomName} (${selectedBlock}) has been directed to ${recipientLabel} via WhatsApp.`
+      `Thank you, ${fullName.trim()}! Your enquiry for ${roomName} (${selectedFloor}) has been directed to ${recipientLabel} via WhatsApp.`
     );
   };
 
@@ -106,10 +99,9 @@ export default function Enquiry() {
 
             {/* Contact Cards */}
             <div className="space-y-4 border-t border-neutral-200 pt-6">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500">DIRECT CONTACT LINES</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500">CONTACT MANAGEMENT</h3>
               {[
                 { label: "Management / Admissions", badge: "DIRECT", desc: "Admissions, bookings, and fee structures", digits: hostel.managementPhoneDigits, display: hostel.managementPhoneDisplay, waText: `Hello Management! I would like to enquire about admission at ${hostel.name}.` },
-                { label: "Warden Desk", badge: "CAMPUS", desc: "Campus visits, room inspection, and daily support", digits: hostel.wardenPhoneDigits, display: hostel.wardenPhoneDisplay, waText: `Hello Warden! I would like to visit ${hostel.name}.` },
               ].map((contact) => (
                 <div key={contact.label} className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200/80 space-y-2">
                   <div className="flex items-center justify-between">
@@ -145,7 +137,7 @@ export default function Enquiry() {
           <div className="lg:col-span-7 bg-[#f8fafc] text-neutral-900 rounded-3xl p-6 sm:p-10 shadow-xl border border-neutral-200/80 relative">
             <h3 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 font-heading tracking-tight">Reserve a room or book a tour</h3>
             <p className="mt-2 text-sm text-neutral-600">
-              Fill in your details below. We will instantly format your enquiry and connect you directly with hostel management or warden on WhatsApp.
+              Fill in your details below. We will instantly format your enquiry and connect you directly with hostel management on WhatsApp.
             </p>
 
             <div aria-live="polite" className="mt-4">
@@ -160,30 +152,6 @@ export default function Enquiry() {
             </div>
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-5">
-              {/* Recipient Toggle */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-2">Send WhatsApp Enquiry To</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {(["management", "warden"] as const).map((r) => (
-                    <button
-                      key={r}
-                      type="button"
-                      onClick={() => setRecipient(r)}
-                      className={`min-h-[48px] px-4 py-2.5 rounded-xl border text-left text-sm transition flex flex-col justify-center ${
-                        recipient === r
-                          ? "bg-[#0f172a] text-white border-[#0f172a] shadow-sm"
-                          : "bg-white text-neutral-900 border-neutral-200 hover:bg-neutral-100"
-                      }`}
-                    >
-                      <span className="font-bold">{r === "management" ? "👤 Management" : "🏢 Warden Desk"}</span>
-                      <span className={`text-xs mt-0.5 ${recipient === r ? "text-key-gold font-bold" : "text-neutral-500"}`}>
-                        {r === "management" ? hostel.managementPhoneDisplay : hostel.wardenPhoneDisplay}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Name */}
               <div>
                 <label htmlFor="full-name" className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
@@ -216,7 +184,7 @@ export default function Enquiry() {
                 />
               </div>
 
-              {/* Room & Block */}
+              {/* Room & Floor */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="room-type" className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">Preferred Room Type</label>
@@ -234,18 +202,17 @@ export default function Enquiry() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="block-choice" className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">Choose Block</label>
+                  <label htmlFor="floor-choice" className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">Choose Floor</label>
                   <select
-                    id="block-choice"
-                    value={selectedBlock}
-                    onChange={(e) => setSelectedBlock(e.target.value)}
+                    id="floor-choice"
+                    value={selectedFloor}
+                    onChange={(e) => setSelectedFloor(e.target.value)}
                     className="w-full min-h-[48px] px-4 py-2.5 rounded-xl bg-white border border-neutral-300 text-neutral-900 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 transition font-medium"
                   >
-                    <option value="A Block (Ground Floor — Non-AC)">A Block (Ground Floor — Non-AC)</option>
-                    <option value="B Block (1st Floor — Non-AC)">B Block (1st Floor — Non-AC)</option>
-                    <option value="C Block (2nd Floor — Unlimited AC)">C Block (2nd Floor — Unlimited AC)</option>
-                    <option value="D Block (3rd Floor — Unlimited AC)">D Block (3rd Floor — Unlimited AC)</option>
-                    <option value="Any Block / Flexible">Any Block / Flexible</option>
+                    {floors.map((floor) => (
+                      <option key={floor.id} value={floor.floorLabel}>{floor.floorLabel}</option>
+                    ))}
+                    <option value="Any Floor / Flexible">Any Floor / Flexible</option>
                   </select>
                 </div>
               </div>
