@@ -1,3 +1,4 @@
+import AnimatedSection from "@/components/AnimatedSection";
 import { siteContent } from "@/lib/site";
 
 const amenityIcons: Record<string, string> = {
@@ -19,7 +20,7 @@ export default function Amenities() {
       <div id="amenities" className="absolute -top-16 left-0" aria-hidden="true" />
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
+          <AnimatedSection as="div" className="max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-amber-800">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden="true" />
               Everyday comfort
@@ -31,15 +32,23 @@ export default function Amenities() {
             <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-600">
               Good food, space to focus, and the comforts of home. Thoughtful facilities that make student life a little easier.
             </p>
-          </div>
+          </AnimatedSection>
+          <AnimatedSection as="div" delay={0.1}>
           <a href="#rooms" className="inline-flex min-h-11 w-fit shrink-0 items-center justify-center gap-3 rounded-xl bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-4">
             View rooms &amp; fees <span aria-hidden="true">↗</span>
           </a>
+          </AnimatedSection>
         </div>
 
         <dl className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-12 lg:grid-cols-4 lg:gap-5">
           {amenities.map((item) => (
-            <div key={item.id} className="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-[0_2px_8px_rgba(15,23,42,0.025)] transition-[border-color,box-shadow] duration-200 hover:border-amber-300 hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)] motion-reduce:transition-none">
+            <AnimatedSection
+              as="div"
+              key={item.id}
+              delay={(amenities.indexOf(item) % 4) * 0.07}
+              whileHover={{ y: -4 }}
+              className="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-[0_2px_8px_rgba(15,23,42,0.025)] transition-[border-color,box-shadow] duration-200 hover:border-amber-300 hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)] motion-reduce:transition-none"
+            >
               <dt>
                 <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-amber-100 bg-amber-50 text-amber-700">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
@@ -57,7 +66,7 @@ export default function Amenities() {
                   </>
                 ) : item.detail}
               </dd>
-            </div>
+            </AnimatedSection>
           ))}
         </dl>
       </div>

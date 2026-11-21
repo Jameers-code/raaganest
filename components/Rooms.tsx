@@ -1,5 +1,6 @@
 "use client";
 
+import AnimatedSection from "@/components/AnimatedSection";
 import { useState } from "react";
 import { siteContent, RoomOption } from "@/lib/site";
 
@@ -54,8 +55,11 @@ export default function Rooms() {
             const buttonLabel = plan.ac ? "Get AC" : "Get Non-AC";
 
             return (
-              <div
+              <AnimatedSection
+                as="div"
                 key={plan.id}
+                delay={displayPlans.indexOf(plan) * 0.1}
+                whileHover={{ y: -5 }}
                 onClick={() => setSelectedPlanId(plan.id)}
                 className={`relative rounded-[28px] p-7 sm:p-8 bg-white transition-all duration-200 flex flex-col justify-between cursor-pointer border ${
                   isSelected
@@ -148,7 +152,7 @@ export default function Rooms() {
                     {plan.depositDisplay}
                   </span>
                 </div>
-              </div>
+              </AnimatedSection>
             );
           })}
         </div>

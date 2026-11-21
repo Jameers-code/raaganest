@@ -9,6 +9,7 @@ export default function Enquiry() {
   const [selectedRoomId, setSelectedRoomId] = useState<string>(rooms[0]?.id || "");
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [studentYear, setStudentYear] = useState("");
   const [selectedFloor, setSelectedFloor] = useState("Any Floor / Flexible");
   const [note, setNote] = useState("");
   const [submittedStatus, setSubmittedStatus] = useState<string | null>(null);
@@ -30,7 +31,7 @@ export default function Enquiry() {
     const targetDigits = hostel.managementPhoneDigits;
     const recipientLabel = "Management / Admissions";
 
-    const message = `Hello ${hostel.name}!\nI would like to enquire about room admission (${recipientLabel}):\n- Name: ${fullName.trim()}\n- Phone: ${phoneNumber.trim()}\n- Room Type: ${roomName}\n- Preferred Floor: ${selectedFloor}\n${note.trim() ? `- Notes / Questions: ${note.trim()}` : ""}`;
+    const message = `Hello ${hostel.name}!\nI would like to enquire about room admission (${recipientLabel}):\n- Name: ${fullName.trim()}\n- Phone: ${phoneNumber.trim()}\n- Student Year: ${studentYear}\n- Room Type: ${roomName}\n- Preferred Floor: ${selectedFloor}\n${note.trim() ? `- Notes / Questions: ${note.trim()}` : ""}`;
 
     const waUrl = `https://wa.me/${targetDigits}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, "_blank", "noopener,noreferrer");
@@ -182,6 +183,27 @@ export default function Enquiry() {
                   placeholder="10-digit mobile number"
                   className="w-full min-h-[48px] px-4 py-2.5 rounded-xl bg-white border border-neutral-300 text-neutral-900 placeholder:text-neutral-400 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 transition"
                 />
+              </div>
+
+              {/* Student Year */}
+              <div>
+                <label htmlFor="student-year" className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
+                  Student Year <span className="text-red-500">*</span>
+                </label>
+                <select
+                  id="student-year"
+                  required
+                  value={studentYear}
+                  onChange={(e) => setStudentYear(e.target.value)}
+                  className="w-full min-h-[48px] px-4 py-2.5 rounded-xl bg-white border border-neutral-300 text-neutral-900 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 transition"
+                >
+                  <option value="" disabled>Select your year</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
 
               {/* Room & Floor */}
